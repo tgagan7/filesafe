@@ -5,11 +5,20 @@
  */
 package editor;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -18,16 +27,33 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author tgaga
  */
 public class Editor extends javax.swing.JFrame {
-
+    
     /**
      * Creates new form Editor
      */
+    
     public Editor() {
         initComponents();
+        frameIcon.setVisible(true);
+        new Thread(){
+            public void run(){
+                
+                    for(int i=0;i<=100;i+=10){
+                    iconProgress.setValue(i);
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException ex) {}
+                }
+                frameIcon.dispose();
+                setVisible(true);
+            }
+        }.start();
         filter = new FileNameExtensionFilter(
         "All Text Files","txt", "java", "c","py");
         FileChooser.setFileFilter(filter);
-        
+        setTitle("Cognitive FileSafe ");
+        //setting splash screen
+        setIconImage(new ImageIcon(getClass().getResource("/editor/icon.png")).getImage());
     }
 
     /**
@@ -40,6 +66,10 @@ public class Editor extends javax.swing.JFrame {
     private void initComponents() {
 
         FileChooser = new javax.swing.JFileChooser();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        frameIcon = new javax.swing.JFrame();
+        labIcon = new javax.swing.JLabel(new ImageIcon(getClass().getResource("/editor/icon.jpg")));
+        iconProgress = new javax.swing.JProgressBar();
         jScrollPane1 = new javax.swing.JScrollPane();
         editorPane = new javax.swing.JEditorPane();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -48,14 +78,45 @@ public class Editor extends javax.swing.JFrame {
         menuOpen = new javax.swing.JMenuItem();
         menuSave = new javax.swing.JMenuItem();
         menuExit = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        menuZoomIn = new javax.swing.JMenuItem();
+        menuZoomOut = new javax.swing.JMenuItem();
+
+        jMenuItem1.setText("jMenuItem1");
+
+        frameIcon.setBackground(new java.awt.Color(255, 255, 255));
+        frameIcon.setBounds(new java.awt.Rectangle((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2-275,(int) Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2-275, 550, 580));
+        frameIcon.setResizable(false);
+
+        labIcon.setBackground(new java.awt.Color(255, 255, 255));
+        labIcon.setAlignmentY(0.0F);
+        labIcon.setBorder(new javax.swing.border.MatteBorder(null));
+        labIcon.setIconTextGap(0);
+
+        javax.swing.GroupLayout frameIconLayout = new javax.swing.GroupLayout(frameIcon.getContentPane());
+        frameIcon.getContentPane().setLayout(frameIconLayout);
+        frameIconLayout.setHorizontalGroup(
+            frameIconLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(labIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(iconProgress, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+        );
+        frameIconLayout.setVerticalGroup(
+            frameIconLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(frameIconLayout.createSequentialGroup()
+                .addComponent(labIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(iconProgress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        editorPane.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jScrollPane1.setViewportView(editorPane);
 
         jMenu1.setText("File");
 
         menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        menuNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/editor/new_1.png"))); // NOI18N
         menuNew.setText("New");
         menuNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -65,6 +126,7 @@ public class Editor extends javax.swing.JFrame {
         jMenu1.add(menuNew);
 
         menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/editor/open.png"))); // NOI18N
         menuOpen.setText("Open");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -74,6 +136,7 @@ public class Editor extends javax.swing.JFrame {
         jMenu1.add(menuOpen);
 
         menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/editor/save.png"))); // NOI18N
         menuSave.setText("Save");
         menuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -83,6 +146,7 @@ public class Editor extends javax.swing.JFrame {
         jMenu1.add(menuSave);
 
         menuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        menuExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/editor/exit.png"))); // NOI18N
         menuExit.setText("Exit");
         menuExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -92,6 +156,30 @@ public class Editor extends javax.swing.JFrame {
         jMenu1.add(menuExit);
 
         jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+
+        menuZoomIn.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_9, java.awt.event.InputEvent.CTRL_MASK));
+        menuZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/editor/zoomin.png"))); // NOI18N
+        menuZoomIn.setText("Zoom In");
+        menuZoomIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuZoomInActionPerformed(evt);
+            }
+        });
+        jMenu2.add(menuZoomIn);
+
+        menuZoomOut.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_0, java.awt.event.InputEvent.CTRL_MASK));
+        menuZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/editor/zoomout.png"))); // NOI18N
+        menuZoomOut.setText("Zoom Out");
+        menuZoomOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuZoomOutActionPerformed(evt);
+            }
+        });
+        jMenu2.add(menuZoomOut);
+
+        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -126,7 +214,7 @@ public class Editor extends javax.swing.JFrame {
             } catch (IOException ex) {
                 
             }
-            setTitle(currentFilePath);
+            setTitle("Cognitive FileSafe: "+currentFilePath);
         }
         savedContent = editorPane.getText();
     }//GEN-LAST:event_menuOpenActionPerformed
@@ -164,7 +252,7 @@ public class Editor extends javax.swing.JFrame {
                
            }
            savedContent = editorPane.getText();
-           setTitle(path);
+           setTitle("Cognitive FileSafe: "+path);
        }
     
     }
@@ -189,6 +277,18 @@ public class Editor extends javax.swing.JFrame {
             }
         
     }//GEN-LAST:event_menuExitActionPerformed
+
+    private void menuZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuZoomOutActionPerformed
+        // TODO add your handling code here:
+        if (size>12)
+            editorPane.setFont(new Font(Font.SANS_SERIF,0,--size));
+    }//GEN-LAST:event_menuZoomOutActionPerformed
+
+    private void menuZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuZoomInActionPerformed
+        // TODO add your handling code here:
+        if (size<=30)
+            editorPane.setFont(new Font(Font.SANS_SERIF,0,++size));
+    }//GEN-LAST:event_menuZoomInActionPerformed
 
     /**
      * @param args the command line arguments
@@ -216,11 +316,11 @@ public class Editor extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Editor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Editor().setVisible(true);
+                new Editor();
             }
         });
     }
@@ -228,16 +328,24 @@ public class Editor extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFileChooser FileChooser;
     private javax.swing.JEditorPane editorPane;
+    private javax.swing.JFrame frameIcon;
+    private javax.swing.JProgressBar iconProgress;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labIcon;
     private javax.swing.JMenuItem menuExit;
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuOpen;
     private javax.swing.JMenuItem menuSave;
+    private javax.swing.JMenuItem menuZoomIn;
+    private javax.swing.JMenuItem menuZoomOut;
     // End of variables declaration//GEN-END:variables
      String currentFilePath;
      FileNameExtensionFilter filter;
      String recentContent="";
      String savedContent= "";
+     int size = 12;
 }
