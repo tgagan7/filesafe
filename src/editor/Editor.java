@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -34,11 +35,15 @@ public class Editor extends javax.swing.JFrame {
     
     public Editor() {
         initComponents();
+        Random r = new Random();
         frameIcon.setVisible(true);
         new Thread(){
             public void run(){
-                
-                    for(int i=0;i<=100;i+=10){
+                    iconProgress.setStringPainted(true);
+                    for(int i=0;i<100;){
+                    i += r.nextInt(10)+1;
+                    i = i>100?100:i;
+                    iconProgress.setString(i+"");
                     iconProgress.setValue(i);
                     try {
                         Thread.sleep(250);
@@ -81,12 +86,20 @@ public class Editor extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
         menuZoomIn = new javax.swing.JMenuItem();
         menuZoomOut = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        menuEncr = new javax.swing.JMenuItem();
+        menuDecr = new javax.swing.JMenuItem();
+        About = new javax.swing.JMenu();
+        menuAbout = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
 
+        frameIcon.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         frameIcon.setBackground(new java.awt.Color(255, 255, 255));
         frameIcon.setBounds(new java.awt.Rectangle((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2-275,(int) Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2-275, 550, 580));
         frameIcon.setResizable(false);
+        frameIcon.setType(java.awt.Window.Type.UTILITY);
 
         labIcon.setBackground(new java.awt.Color(255, 255, 255));
         labIcon.setAlignmentY(0.0F);
@@ -180,6 +193,53 @@ public class Editor extends javax.swing.JFrame {
         jMenu2.add(menuZoomOut);
 
         jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Encrypt");
+
+        menuEncr.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuEncr.setText("Encryption");
+        menuEncr.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuEncrActionPerformed(evt);
+            }
+        });
+        jMenu3.add(menuEncr);
+
+        menuDecr.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuDecr.setText("Decryption");
+        menuDecr.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDecrActionPerformed(evt);
+            }
+        });
+        jMenu3.add(menuDecr);
+
+        jMenuBar1.add(jMenu3);
+
+        About.setText("Team");
+        About.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AboutActionPerformed(evt);
+            }
+        });
+
+        menuAbout.setText("About us");
+        menuAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuAboutActionPerformed(evt);
+            }
+        });
+        About.add(menuAbout);
+
+        jMenuItem2.setText("Contact");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        About.add(jMenuItem2);
+
+        jMenuBar1.add(About);
 
         setJMenuBar(jMenuBar1);
 
@@ -290,6 +350,83 @@ public class Editor extends javax.swing.JFrame {
             editorPane.setFont(new Font(Font.SANS_SERIF,0,++size));
     }//GEN-LAST:event_menuZoomInActionPerformed
 
+    private void menuEncrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEncrActionPerformed
+        // TODO add your handling code here:
+        String pass = JOptionPane.showInputDialog(this,"Set Password for Encryption (min. length 5 chars)","Password To Encrypt",  DISPOSE_ON_CLOSE);
+        if(pass!=null && pass.length()>=5){
+            editorPane.setText(encrData(pass).toString()+"\n"+encrData(editorPane.getText()).toString());
+            int ret = FileChooser.showSaveDialog(this);
+            doSave(ret);
+        }else{
+            JOptionPane.showMessageDialog(this, "Invalid Password Please Retry!!!!!!");
+        }
+        
+    }//GEN-LAST:event_menuEncrActionPerformed
+
+    private void menuDecrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDecrActionPerformed
+        // TODO add your handling code here:
+        String pass = JOptionPane.showInputDialog(this,"Enter Decryption Password","Password To Decrypt",  DISPOSE_ON_CLOSE);
+        String temp = editorPane.getText();
+        String passActual = decrData(temp.substring(0,temp.indexOf("\n"))).toString();
+        
+        if(pass!=null && pass.equals(passActual)){
+            editorPane.setText(decrData(temp.substring(temp.indexOf("\n")+1)).toString());
+        }else{
+             JOptionPane.showMessageDialog(this, "Invalid Password Please Retry!!!!!!");
+        }
+        
+    }//GEN-LAST:event_menuDecrActionPerformed
+
+    private void AboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutActionPerformed
+        // TODO add your handling code here:
+         
+    }//GEN-LAST:event_AboutActionPerformed
+
+    private void menuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAboutActionPerformed
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(this, "Developed By !!!!!! \n Cognitive Creators "
+                 + "\n © Cognitive 2019");
+    }//GEN-LAST:event_menuAboutActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(this,"Facebook :- www.facebook.com/gagandeep.thakur\nPhone:- 7003572954\nEmail :- gagan.training@gmail.com");
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    
+    private StringBuilder encrData(String data){
+            StringBuilder sb = new StringBuilder();
+            char c;
+            long l;
+            for(int i=0;i<data.length();i++){
+                c = data.charAt(i);
+                l = i*i;
+                if(l%2==0){
+                    c += (l%10);
+                }
+                else{
+                    c -= ((l%10));
+                }
+                sb.append(c);
+            }
+            return sb;
+    }
+    private StringBuilder decrData(String data){
+        StringBuilder sb = new StringBuilder();
+            char c;
+            long l;
+            for(int i=0;i<data.length();i++){
+                c = data.charAt(i);
+                l = i*i;
+                if(l%2==0){
+                    c -= (l%10);
+                }
+                else{
+                    c += ((l%10));
+                }
+                sb.append(c);
+            }
+            return sb;
+    }
     /**
      * @param args the command line arguments
      */
@@ -326,16 +463,22 @@ public class Editor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu About;
     private javax.swing.JFileChooser FileChooser;
     private javax.swing.JEditorPane editorPane;
     private javax.swing.JFrame frameIcon;
     private javax.swing.JProgressBar iconProgress;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labIcon;
+    private javax.swing.JMenuItem menuAbout;
+    private javax.swing.JMenuItem menuDecr;
+    private javax.swing.JMenuItem menuEncr;
     private javax.swing.JMenuItem menuExit;
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuOpen;
